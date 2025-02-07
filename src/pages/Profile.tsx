@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import {API_BASE_URL} from "../config/api.ts";
 
 interface UserProfile {
   name: string;
@@ -19,7 +20,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch(`${API_BASE_URL}/api/user`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

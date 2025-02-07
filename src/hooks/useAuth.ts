@@ -1,48 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { API_BASE_URL, MOCK_USER } from '../config/api';
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
+    if (token) {
+      setIsAuthenticated(true);
+      setUser(JSON.parse(localStorage.getItem('user') || '{}'));
+    }
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
-    if (process.env.NODE_ENV === 'development') {
-      localStorage.setItem('token', MOCK_USER.token);
-      return { success: true, data: MOCK_USER };
-    }
-
+  const login = useCallback(async (email: string, password: string) => {
     try {
+
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-      
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        return { success: true, data };
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
       }
-      
-      return { success: false, error: data.message };
-    } catch (error) {
-      return { success: false, error: 'Login failed' };
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setIsAuthenticated(true);
+      setUser(data.user);
+
+      return { success: true, data: data.user };
+    } catch (error: any) {
+      return { success: false, error: error.message || 'Login failed' };
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsAuthenticated(false);
-  };
+    setUser(null);
+  }, []);
 
-  return { isAuthenticated, loading, login, logout };
+  return { isAuthenticated, loading, user, login, logout };
 };
