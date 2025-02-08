@@ -18,5 +18,8 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  token: string;
+  avatar: string | null;
+  roles: string[];
+  created_at: string;
+  updated_at: string;
 }

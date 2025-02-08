@@ -1,6 +1,5 @@
-import { Order } from '../types';
-
-export const API_BASE_URL = 'https://api-dikantri.kousse.com';
+// Remove the API_BASE_URL since we're using relative paths with the proxy
+export const API_BASE_URL = '';
 
 // Mock data for development
 export const MOCK_ORDERS: Order[] = [

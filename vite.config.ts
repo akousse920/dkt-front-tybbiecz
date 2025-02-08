@@ -7,4 +7,13 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api-dikantri.kousse.com',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })
