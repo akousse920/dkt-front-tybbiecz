@@ -1,6 +1,6 @@
 import { Order } from '../types';
 
-export const API_BASE_URL = 'http://dikantri-api.test';
+export const API_BASE_URL = 'https://api-dikantri.kousse.com';
 
 // Mock data for development
 export const MOCK_ORDERS: Order[] = [
